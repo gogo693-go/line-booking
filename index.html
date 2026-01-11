@@ -1,190 +1,351 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>LINE 預約</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>LINE 預約</title>
 
-<style>
-:root{
-  --ui:1;
-  --radius:18px;
-}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC";
-  background:#f6f7fb;
-}
-.app{min-height:100vh;display:flex;flex-direction:column}
-.content{flex:1;padding:12px;box-sizing:border-box}
-.card{
-  background:#fff;
-  border-radius:var(--radius);
-  padding:14px;
-  margin-bottom:12px;
-}
-.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.demo{
-  border:2px solid #e5e7eb;
-  border-radius:16px;
-  overflow:hidden;
-  cursor:pointer;
-}
-.demo.active{border-color:#06c755}
-.demo img{width:100%;height:110px;object-fit:cover}
-.demo .txt{text-align:center;font-weight:700;padding:6px}
-label{font-weight:700;display:block;margin:10px 0 4px}
-input,select,textarea{
-  width:100%;padding:10px;border-radius:12px;
-  border:1px solid #ddd;font-size:16px;
-}
-textarea{resize:none;height:80px}
-.footer{
-  position:sticky;bottom:0;
-  background:#f6f7fb;padding:12px;border-top:1px solid #eee
-}
-button{
-  width:100%;height:54px;
-  border:0;border-radius:16px;
-  background:#06c755;color:#fff;
-  font-size:18px;font-weight:800;
-}
-.msg{text-align:center;margin-top:8px;font-weight:800}
-.msg.ok{color:#16a34a}
-.msg.err{color:#dc2626}
-</style>
+  <style>
+    :root{
+      --ui: 1.00;
+      --radius: calc(18px * var(--ui));
+      --gap: calc(10px * var(--ui));
+
+      --h1: clamp(18px, 2.4vh, 22px);
+      --h2: clamp(16px, 2.1vh, 20px);
+      --p:  clamp(13px, 1.8vh, 16px);
+      --label: clamp(13px, 1.8vh, 16px);
+      --input: clamp(14px, 2.0vh, 17px);
+
+      --btnH: clamp(52px, 7vh, 64px);
+      --btnFont: clamp(16px, 2.1vh, 18px);
+    }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #f6f7fb;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", Arial;
+    }
+
+    .app{
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content{
+      flex: 1;
+      padding: calc(12px * var(--ui));
+      box-sizing: border-box;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .card{
+      background: #fff;
+      border-radius: var(--radius);
+      padding: calc(14px * var(--ui));
+      box-shadow: 0 6px 18px rgba(0,0,0,.06);
+      margin-bottom: var(--gap);
+    }
+
+    h1{
+      font-size: var(--h1);
+      margin: 0 0 8px 0;
+      font-weight: 900;
+    }
+
+    .muted{
+      font-size: var(--p);
+      color: #667085;
+      line-height: 1.35;
+    }
+
+    .sectionTitle{
+      font-size: var(--h2);
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .demo-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+    }
+
+    .demo{
+      border: 2px solid #e2e6ef;
+      border-radius: calc(16px * var(--ui));
+      overflow: hidden;
+      cursor: pointer;
+      background: #fff;
+      user-select: none;
+    }
+
+    .demo img{
+      width: 100%;
+      height: clamp(92px, 14vh, 120px);
+      object-fit: cover;
+      display: block;
+      background: #eee;
+    }
+
+    .demo .txt{
+      padding: calc(8px * var(--ui));
+      text-align: center;
+      font-weight: 900;
+      font-size: clamp(14px, 2.0vh, 17px);
+    }
+
+    .demo.active{
+      border-color: #06c755;
+      box-shadow: 0 0 0 3px rgba(6,199,85,.2);
+    }
+
+    label{
+      display:block;
+      margin: calc(10px * var(--ui)) 0 calc(6px * var(--ui));
+      font-size: var(--label);
+      font-weight: 800;
+    }
+
+    input, select, textarea{
+      width: 100%;
+      padding: calc(12px * var(--ui));
+      border-radius: calc(14px * var(--ui));
+      border: 1px solid #e2e6ef;
+      font-size: var(--input);
+      box-sizing: border-box;
+      outline: none;
+      background: #fff;
+    }
+
+    .row{
+      display: grid;
+      grid-template-columns: 1fr clamp(110px, 26vw, 140px);
+      gap: var(--gap);
+    }
+
+    textarea{
+      height: clamp(70px, 12vh, 110px);
+      resize: none;
+    }
+
+    .footer{
+      position: sticky;
+      bottom: 0;
+      background: #f6f7fb;
+      padding: calc(10px * var(--ui)) calc(12px * var(--ui)) calc(10px + env(safe-area-inset-bottom));
+      box-sizing: border-box;
+      border-top: 1px solid #eef0f6;
+    }
+
+    .btn{
+      width: 100%;
+      height: var(--btnH);
+      border: 0;
+      border-radius: calc(16px * var(--ui));
+      background: #06c755;
+      color: #fff;
+      font-size: var(--btnFont);
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .btn:disabled{ opacity: .7; cursor: not-allowed; }
+
+    .msg{
+      text-align: center;
+      margin-top: 8px;
+      font-size: clamp(12px, 1.6vh, 14px);
+      color: #667085;
+      min-height: 20px;
+      font-weight: 800;
+    }
+    .msg.ok{ color:#067647; }
+    .msg.err{ color:#b42318; }
+  </style>
 </head>
 
 <body>
-<div class="app">
-  <div class="content">
+  <div class="app">
+    <div class="content">
+      <div class="card">
+        <h1>預約表單</h1>
+        <div class="muted">於 LINE 內完成，不會跳外部瀏覽器</div>
+      </div>
 
-    <div class="card">
-      <h2>① 選擇套用模板</h2>
-      <div class="demo-grid" id="demoGrid"></div>
+      <div class="card">
+        <div class="sectionTitle">① 選擇套用模板</div>
+        <div class="demo-grid" id="demoGrid"></div>
+      </div>
+
+      <div class="card">
+        <div class="sectionTitle">② 客戶資料</div>
+
+        <label>姓氏</label>
+        <div class="row">
+          <input id="lastName" placeholder="例如：王" />
+          <select id="title">
+            <option value="">稱謂</option>
+            <option value="先生">先生</option>
+            <option value="小姐">小姐</option>
+          </select>
+        </div>
+
+        <label>聯絡電話（10位數）</label>
+        <input id="phone" placeholder="0912345678" inputmode="tel" />
+
+        <label>備註（可選）</label>
+        <textarea id="note" placeholder="方便聯絡時間 / 需求說明..."></textarea>
+      </div>
     </div>
 
-    <div class="card">
-      <h2>② 客戶資料</h2>
-
-      <label>姓氏</label>
-      <input id="lastName" placeholder="例如：王">
-
-      <label>稱謂</label>
-      <select id="title">
-        <option value="">請選擇</option>
-        <option value="先生">先生</option>
-        <option value="小姐">小姐</option>
-      </select>
-
-      <label>聯絡電話</label>
-      <input id="phone" inputmode="tel" placeholder="0912345678">
-
-      <label>備註（可選）</label>
-      <textarea id="note"></textarea>
+    <div class="footer">
+      <button class="btn" id="submitBtn">我要預約</button>
+      <div class="msg" id="msg"></div>
     </div>
-
   </div>
 
-  <div class="footer">
-    <button id="submitBtn">我要預約</button>
-    <div class="msg" id="msg"></div>
-  </div>
-</div>
+  <!-- LIFF SDK -->
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<script>
-const LIFF_ID = "2008866230-o043vGnI";
-const API_URL = "https://script.google.com/macros/s/AKfycbzXIV_n3MEPgLhWWP-tFUPaMGX6T6Cxa5vxz6aUSP37I_sX2uyYywoTz2-P-ycMVVD_/exec";
+  <script>
+    // =========================
+    // 1) 你的設定（只改這兩個）
+    // =========================
+    const LIFF_ID = "2008866230-o043vGnI";
 
-const DEMOS = [
-  { id:"Demo A", name:"Demo A", img:"https://picsum.photos/600/400?1" },
-  { id:"Demo B", name:"Demo B", img:"https://picsum.photos/600/400?2" },
-];
+    // ✅ 這裡一定貼「Apps Script 部署出來的 /exec」
+    const API_URL = "https://script.google.com/macros/s/AKfycbzXIV_n3MEPgLhWWP-tFUPaMGX6T6Cxa5vxz6aUSP37I_sX2uyYywoTz2-P-ycMVVD_/exec";
 
-let selectedDemo = "";
-let userId = "";
-let displayName = "";
+    // =========================
+    // 2) Demo 資料
+    // =========================
+    const DEMOS = [
+      { id: "Demo A", name: "Demo A", img: "https://picsum.photos/600/400?1" },
+      { id: "Demo B", name: "Demo B", img: "https://picsum.photos/600/400?2" }
+    ];
 
-function showMsg(t, ok){
-  const m=document.getElementById("msg");
-  m.textContent=t;
-  m.className="msg "+(ok?"ok":"err");
-}
+    let selectedDemo = "";
 
-function renderDemos(){
-  const g=document.getElementById("demoGrid");
-  g.innerHTML="";
-  DEMOS.forEach(d=>{
-    const el=document.createElement("div");
-    el.className="demo";
-    el.innerHTML=`<img src="${d.img}"><div class="txt">${d.name}</div>`;
-    el.onclick=()=>{
-      selectedDemo=d.id;
-      [...g.children].forEach(x=>x.classList.remove("active"));
-      el.classList.add("active");
-    };
-    g.appendChild(el);
-  });
-}
-
-async function initLIFF(){
-  try{
-    await liff.init({ liffId: LIFF_ID });
-    if(liff.isLoggedIn()){
-      const p=await liff.getProfile();
-      userId=p.userId;
-      displayName=p.displayName;
-    }
-  }catch(e){
-    // 不顯示錯誤，避免干擾 UX
-  }
-}
-
-async function submit(){
-  const btn=document.getElementById("submitBtn");
-  btn.disabled=true;
-  showMsg("送出中…",true);
-
-  try{
-    const payload={
-      demo:selectedDemo,
-      lastName:lastName.value.trim(),
-      title:title.value,
-      phone:phone.value.trim(),
-      note:note.value.trim(),
-      userId,displayName
-    };
-
-    if(!payload.demo||!payload.lastName||!payload.title||!payload.phone)
-      throw new Error();
-
-    const body=JSON.stringify(payload);
-
-    // ✅ 不讀回應，避免 failed to fetch
-    if(navigator.sendBeacon){
-      navigator.sendBeacon(API_URL,new Blob([body],{type:"text/plain"}));
-    }else{
-      await fetch(API_URL,{method:"POST",mode:"no-cors",body});
+    function setMsg(text, type="") {
+      const el = document.getElementById("msg");
+      el.className = "msg " + (type || "");
+      el.textContent = text || "";
     }
 
-    showMsg("✅ 預約成功",true);
-
-    if(window.liff && liff.isInClient()){
-      liff.sendMessages([{type:"text",text:"已收到您的預約 ✅"}])
-        .then(()=>setTimeout(()=>liff.closeWindow(),600));
+    function renderDemos(){
+      const grid = document.getElementById("demoGrid");
+      grid.innerHTML = "";
+      DEMOS.forEach((d, i) => {
+        const el = document.createElement("div");
+        el.className = "demo";
+        el.innerHTML = `<img src="${d.img}" alt=""><div class="txt">${d.name}</div>`;
+        el.onclick = () => {
+          selectedDemo = d.id;
+          [...grid.children].forEach(x => x.classList.remove("active"));
+          el.classList.add("active");
+        };
+        grid.appendChild(el);
+        if (i === 0) el.click();
+      });
     }
 
-  }catch(e){
-    showMsg("❌ 預約失敗",false);
-  }finally{
-    btn.disabled=false;
-  }
-}
+    function validateForm(){
+      const lastName = document.getElementById("lastName").value.trim();
+      const title = document.getElementById("title").value.trim();
+      const phone = document.getElementById("phone").value.trim();
 
-renderDemos();
-initLIFF();
-submitBtn.onclick=submit;
-</script>
+      const missing = [];
+      if (!lastName) missing.push("姓氏");
+      if (!title) missing.push("稱謂");
+      if (!phone) missing.push("電話");
+      else if (!/^\d{10}$/.test(phone)) missing.push("電話需10位數");
+
+      return { ok: missing.length === 0, missing, lastName, title, phone };
+    }
+
+    async function initLIFF(){
+      try {
+        await liff.init({ liffId: LIFF_ID });
+        // 沒事就不要吵
+        setMsg("");
+      } catch (e) {
+        // 不是在 LINE 內開也可能會失敗，不要一直紅字嚇人
+        setMsg("（提示）非 LINE 內開啟，LIFF 不會登入也沒關係", "");
+      }
+    }
+
+    async function submit(){
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+
+      const v = validateForm();
+      if (!v.ok) {
+        setMsg("請補齊：" + v.missing.join("、"), "err");
+        btn.disabled = false;
+        return;
+      }
+
+      setMsg("送出中…");
+
+      let userId = "";
+      let displayName = "";
+      try {
+        if (window.liff && liff.isInClient() && liff.isLoggedIn()) {
+          const profile = await liff.getProfile();
+          userId = profile.userId || "";
+          displayName = profile.displayName || "";
+        }
+      } catch (_) {}
+
+      const payload = {
+        demo: selectedDemo,
+        lastName: v.lastName,
+        title: v.title,
+        phone: v.phone,
+        note: document.getElementById("note").value.trim(),
+        userId,
+        displayName
+      };
+
+      try {
+        // ✅ 用 text/plain 避免 CORS 預檢，Apps Script 最穩
+        const res = await fetch(API_URL, {
+          method: "POST",
+          mode: "cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const text = await res.text();
+        let json = {};
+        try { json = JSON.parse(text); } catch (_) {}
+
+        if (!res.ok || !json.success) {
+          const errMsg = (json && json.error) ? json.error : `HTTP ${res.status}`;
+          throw new Error(errMsg);
+        }
+
+        setMsg("✅ 預約成功", "ok");
+
+        if (window.liff && liff.isInClient()) {
+          setTimeout(() => liff.closeWindow(), 900);
+        }
+      } catch (e) {
+        setMsg("❌ 預約失敗：" + (e.message || "未知錯誤"), "err");
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    renderDemos();
+    initLIFF();
+    document.getElementById("submitBtn").addEventListener("click", submit);
+  </script>
 </body>
 </html>
