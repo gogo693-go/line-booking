@@ -1,139 +1,73 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>LINE 預約</title>
 
 <style>
-body {
-  margin: 0;
-  background: #f6f7fb;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
-}
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-.content {
-  padding: 16px;
-  flex: 1;
-}
-.card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-.demo-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.demo {
-  border: 2px solid #ddd;
-  border-radius: 14px;
-  overflow: hidden;
-  cursor: pointer;
-}
-.demo.active {
-  border-color: #06c755;
-}
-.demo img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-}
-.demo .txt {
-  padding: 8px;
-  text-align: center;
-  font-weight: 700;
-}
-label {
-  display: block;
-  margin-top: 12px;
-  margin-bottom: 4px;
-  font-weight: 600;
-}
-input, select, textarea {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  font-size: 16px;
-}
-.row {
-  display: grid;
-  grid-template-columns: 1fr 120px;
-  gap: 8px;
-}
-.footer {
-  padding: 12px;
-  background: #fff;
-  border-top: 1px solid #eee;
-}
-button {
-  width: 100%;
-  height: 56px;
-  border-radius: 16px;
-  border: none;
-  background: #06c755;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-}
-.msg {
-  margin-top: 8px;
-  text-align: center;
-  font-weight: 700;
-}
-.msg.ok { color: #06c755; }
-.msg.err { color: #d93025; }
+  body { margin:0; background:#f6f7fb; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto; }
+  .app { min-height:100vh; display:flex; flex-direction:column; }
+  .content { padding:16px; flex:1; }
+  .card { background:#fff; border-radius:16px; padding:16px; margin-bottom:16px; }
+  .demo-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .demo { border:2px solid #ddd; border-radius:14px; overflow:hidden; cursor:pointer; }
+  .demo.active { border-color:#06c755; }
+  .demo img { width:100%; height:120px; object-fit:cover; }
+  .demo .txt { padding:8px; text-align:center; font-weight:700; }
+  label { display:block; margin-top:12px; margin-bottom:4px; font-weight:600; }
+  input, select, textarea { width:100%; padding:12px; border-radius:12px; border:1px solid #ddd; font-size:16px; box-sizing:border-box; }
+  .row { display:grid; grid-template-columns:1fr 120px; gap:8px; }
+  .footer { padding:12px; background:#fff; border-top:1px solid #eee; }
+  button { width:100%; height:56px; border-radius:16px; border:none; background:#06c755; color:#fff; font-size:18px; font-weight:700; cursor:pointer; }
+  button:disabled { opacity:.6; cursor:not-allowed; }
+  .msg { margin-top:8px; text-align:center; font-weight:700; }
+  .msg.ok { color:#06c755; }
+  .msg.err { color:#d93025; }
 </style>
 </head>
 
 <body>
 <div class="app">
 
-<div class="content">
-  <div class="card">
-    <h2>① 選擇服務</h2>
-    <div class="demo-grid" id="demoGrid"></div>
-  </div>
-
-  <div class="card">
-    <h2>② 客戶資料</h2>
-
-    <label>姓氏</label>
-    <div class="row">
-      <input id="lastName" placeholder="例如：王">
-      <select id="title">
-        <option value="">稱謂</option>
-        <option>先生</option>
-        <option>小姐</option>
-      </select>
+  <div class="content">
+    <div class="card">
+      <h2>① 選擇服務</h2>
+      <div class="demo-grid" id="demoGrid"></div>
     </div>
 
-    <label>聯絡電話</label>
-    <input id="phone" placeholder="0912345678" inputmode="tel">
+    <div class="card">
+      <h2>② 客戶資料</h2>
 
-    <label>備註（可選）</label>
-    <textarea id="note"></textarea>
+      <label>姓氏</label>
+      <div class="row">
+        <input id="lastName" placeholder="例如：王" />
+        <select id="title">
+          <option value="">稱謂</option>
+          <option value="先生">先生</option>
+          <option value="小姐">小姐</option>
+        </select>
+      </div>
+
+      <label>聯絡電話</label>
+      <input id="phone" placeholder="0912345678" inputmode="tel" />
+
+      <label>備註（可選）</label>
+      <textarea id="note"></textarea>
+    </div>
   </div>
-</div>
 
-<div class="footer">
-  <button id="submitBtn">我要預約</button>
-  <div class="msg" id="msg"></div>
-</div>
+  <div class="footer">
+    <button id="submitBtn">我要預約</button>
+    <div class="msg" id="msg"></div>
+  </div>
 
 </div>
 
 <script>
-/* ===== 只要改這一行 ===== */
+/* ===== 只要改這一行（用 Google 的後端，不是 gogo693-go）===== */
 const API_URL = "https://script.google.com/macros/s/AKfycbzXIV_n3MEPgLhWWP-tFUPaMGX6T6Cxa5vxz6aUSP37I_sX2uyYywoTz2-P-ycMVVD_/exec";
-/* ====================== */
+/* =========================================================== */
 
 const DEMOS = [
   { id: "Demo A", img: "https://picsum.photos/400/300?1" },
@@ -142,63 +76,83 @@ const DEMOS = [
 
 let selectedDemo = "";
 
-const demoGrid = document.getElementById("demoGrid");
-DEMOS.forEach(d => {
-  const el = document.createElement("div");
-  el.className = "demo";
-  el.innerHTML = `<img src="${d.img}"><div class="txt">${d.id}</div>`;
-  el.onclick = () => {
-    selectedDemo = d.id;
-    document.querySelectorAll(".demo").forEach(x => x.classList.remove("active"));
-    el.classList.add("active");
-  };
-  demoGrid.appendChild(el);
-});
-document.querySelector(".demo")?.click();
-
-function showMsg(text, ok) {
+function showMsg(text, type="") {
   const m = document.getElementById("msg");
-  m.textContent = text;
-  m.className = "msg " + (ok ? "ok" : "err");
+  if (!m) return;
+  m.textContent = text || "";
+  m.className = "msg " + (type || "");
 }
 
-document.getElementById("submitBtn").onclick = async () => {
-  const lastName = lastNameInput.value.trim();
-  const title = titleInput.value;
-  const phone = phoneInput.value.trim();
+window.addEventListener("DOMContentLoaded", () => {
+  // ✅ DOM 元素
+  const demoGrid = document.getElementById("demoGrid");
+  const lastNameEl = document.getElementById("lastName");
+  const titleEl = document.getElementById("title");
+  const phoneEl = document.getElementById("phone");
+  const noteEl = document.getElementById("note");
+  const btn = document.getElementById("submitBtn");
 
-  if (!selectedDemo) return showMsg("請選擇服務", false);
-  if (!lastName) return showMsg("請填寫姓氏", false);
-  if (!title) return showMsg("請選擇稱謂", false);
-  if (!/^\d{10}$/.test(phone)) return showMsg("請填寫正確電話", false);
-
-  showMsg("送出中…");
-
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        demo: selectedDemo,
-        lastName,
-        title,
-        phone,
-        note: note.value.trim()
-      })
+  // ✅ 渲染服務卡
+  demoGrid.innerHTML = "";
+  DEMOS.forEach(d => {
+    const el = document.createElement("div");
+    el.className = "demo";
+    el.innerHTML = `<img src="${d.img}" alt=""><div class="txt">${d.id}</div>`;
+    el.addEventListener("click", () => {
+      selectedDemo = d.id;
+      document.querySelectorAll(".demo").forEach(x => x.classList.remove("active"));
+      el.classList.add("active");
+      showMsg(""); // 清掉訊息
     });
+    demoGrid.appendChild(el);
+  });
+  // 預設選第一個
+  document.querySelector(".demo")?.click();
 
-    const json = await res.json();
+  // ✅ 按鈕事件
+  btn.addEventListener("click", async () => {
+    const lastName = (lastNameEl.value || "").trim();
+    const title = (titleEl.value || "").trim();
+    const phone = (phoneEl.value || "").trim();
+    const note = (noteEl.value || "").trim();
 
-    if (json.success) {
-      showMsg("✅ 預約成功", true);
-    } else {
-      showMsg("❌ " + json.message, false);
+    // 缺什麼提示什麼
+    if (!selectedDemo) return showMsg("請選擇服務", "err");
+    if (!lastName) return showMsg("請填寫姓氏", "err");
+    if (!title) return showMsg("請選擇稱謂", "err");
+    if (!phone) return showMsg("請填寫電話", "err");
+    if (!/^\d{10}$/.test(phone)) return showMsg("電話格式不正確", "err");
+
+    btn.disabled = true;
+    showMsg("送出中…");
+
+    try {
+      const payload = { demo: selectedDemo, lastName, title, phone, note };
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        // ✅ GAS 最穩（避免某些狀況 preflight / 回應讀不到）
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+      });
+
+      const text = await res.text();
+      let json = {};
+      try { json = JSON.parse(text); } catch (_) {}
+
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || "預約失敗");
+      }
+
+      showMsg("✅ 預約成功", "ok");
+    } catch (e) {
+      console.error(e);
+      showMsg("❌ 預約失敗", "err");
+    } finally {
+      btn.disabled = false;
     }
-
-  } catch (e) {
-    showMsg("❌ 預約失敗，請稍後再試", false);
-  }
-};
+  });
+});
 </script>
 
 </body>
