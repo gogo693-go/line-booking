@@ -5,243 +5,255 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>LINE 預約</title>
 
-  <!-- ===== 這段：整體版面（像 App：上面滾動、底部固定按鈕）===== -->
   <style>
+    /* ====== 基本版面：手機像 App、電腦置中 ====== */
     :root{
-      --bg:#f6f7fb;
-      --card:#fff;
-      --text:#111;
-      --muted:#667085;
-      --brand:#06c755; /* LINE 綠 */
-      --border:#e7e9f0;
-      --radius:20px;
-      --gap:14px;
+      --maxw: 720px;
+      --radius: 18px;
+      --gap: 14px;
 
-      /* 這段：整體字體/元件尺寸（想放大縮小就改這個） */
-      --ui: 1.00; /* 1.00 正常；1.10 更大；0.95 更小 */
+      /* 字體/元件比例：想放大就調這個 */
+      --scale: 1.00;
+
+      --h1: calc(22px * var(--scale));
+      --h2: calc(18px * var(--scale));
+      --p:  calc(14px * var(--scale));
+      --label: calc(15px * var(--scale));
+      --input: calc(16px * var(--scale));
+
+      --btnH: calc(62px * var(--scale));
+      --btnFont: calc(20px * var(--scale));
     }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; margin:0; background:var(--bg); color:var(--text);
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", Arial; }
-
-    /* 這段：置中寬度（手機滿版、電腦不會太寬） */
-    .shell{
-      height:100vh;
-      display:flex;
-      justify-content:center;
+    html, body{
+      margin:0;
+      height:100%;
+      background:#f6f7fb;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", Arial;
+      color:#111;
     }
+
     .app{
-      width:100%;
-      max-width:540px;      /* 電腦版可看清楚 */
-      height:100vh;
+      min-height:100vh;
       display:flex;
       flex-direction:column;
+      align-items:center;
     }
 
-    /* 這段：上半部可滾動內容 */
+    /* 上面內容可滾動、底部固定按鈕 */
     .content{
-      flex:1;
+      width: min(100%, var(--maxw));
+      padding: 14px;
+      box-sizing:border-box;
+      flex: 1;
       overflow:auto;
-      padding:calc(14px * var(--ui));
-      padding-bottom:calc(110px * var(--ui)); /* 給底部按鈕留空間，避免被蓋住 */
-      -webkit-overflow-scrolling:touch;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* 這段：卡片樣式 */
     .card{
-      background:var(--card);
-      border-radius:calc(var(--radius) * var(--ui));
-      box-shadow:0 10px 24px rgba(0,0,0,.06);
-      padding:calc(16px * var(--ui));
-      margin-bottom:calc(var(--gap) * var(--ui));
+      background:#fff;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 22px rgba(0,0,0,.06);
+      padding: 16px;
+      margin-bottom: var(--gap);
     }
 
-    /* 這段：文字大小（整體等比例） */
     h1{
-      margin:0 0 calc(8px * var(--ui)) 0;
-      font-size:clamp(20px, 2.3vh, 28px);
-      font-weight:900;
+      margin:0 0 6px 0;
+      font-size: var(--h1);
+      font-weight: 900;
+      letter-spacing: .5px;
     }
+
+    .muted{
+      font-size: var(--p);
+      color:#6b7280;
+      line-height:1.35;
+    }
+
     .sectionTitle{
+      font-size: var(--h2);
+      font-weight: 900;
       display:flex;
       align-items:center;
       gap:10px;
-      font-weight:900;
-      font-size:clamp(18px, 2.1vh, 24px);
-      margin:0 0 calc(10px * var(--ui)) 0;
-    }
-    .muted{
-      color:var(--muted);
-      font-size:clamp(14px, 1.8vh, 18px);
-      line-height:1.4;
+      margin: 0 0 10px 0;
     }
 
-    /* 這段：Demo 兩格選擇 */
+    /* ====== Demo 選擇 ====== */
     .demo-grid{
       display:grid;
       grid-template-columns: 1fr 1fr;
-      gap:calc(var(--gap) * var(--ui));
+      gap: var(--gap);
     }
+
     .demo{
-      border:2px solid var(--border);
-      border-radius:calc(18px * var(--ui));
+      border: 2px solid #e5e7eb;
+      border-radius: calc(var(--radius) + 6px);
       overflow:hidden;
       background:#fff;
       cursor:pointer;
       user-select:none;
-      transition:.15s transform ease, .15s border-color ease;
     }
-    .demo:active{ transform:scale(.99); }
+
     .demo.active{
-      border-color:var(--brand);
-      box-shadow:0 0 0 3px rgba(6,199,85,.18);
+      border-color:#06c755;
+      box-shadow: 0 0 0 3px rgba(6,199,85,.18);
     }
+
     .demo img{
       width:100%;
-      height:clamp(110px, 16vh, 150px); /* 圖片不會太高 */
+      height: 140px;
       object-fit:cover;
       display:block;
       background:#eee;
     }
+
     .demo .txt{
       text-align:center;
-      font-weight:900;
-      font-size:clamp(16px, 2.1vh, 20px);
-      padding:calc(10px * var(--ui));
+      font-weight: 900;
+      padding: 10px;
+      font-size: calc(18px * var(--scale));
     }
 
-    /* 這段：表單 */
+    /* ====== 表單 ====== */
     label{
       display:block;
-      margin:calc(12px * var(--ui)) 0 calc(6px * var(--ui));
-      font-weight:800;
-      font-size:clamp(15px, 1.9vh, 18px);
+      margin: 10px 0 6px;
+      font-size: var(--label);
+      font-weight: 800;
     }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 160px;
+      gap: var(--gap);
+    }
+
     input, select, textarea{
       width:100%;
-      padding:calc(14px * var(--ui));
-      border-radius:calc(16px * var(--ui));
-      border:1px solid var(--border);
-      font-size:clamp(16px, 2.0vh, 18px);
+      box-sizing:border-box;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 14px 14px;
+      font-size: var(--input);
       outline:none;
       background:#fff;
     }
+
     textarea{
-      height:clamp(80px, 12vh, 120px); /* 備註不會爆大 */
       resize:none;
-    }
-    .row{
-      display:grid;
-      grid-template-columns: 1fr clamp(120px, 28vw, 160px);
-      gap:calc(var(--gap) * var(--ui));
-      align-items:center;
+      height: 120px;
     }
 
-    /* 這段：底部固定送出區（按鈕永遠在最下面） */
+    /* ====== 底部固定區 ====== */
     .footer{
-      position:sticky;
-      bottom:0;
-      background:rgba(246,247,251,.92);
-      backdrop-filter: blur(10px);
-      padding:calc(12px * var(--ui));
-      padding-bottom:calc(12px * var(--ui) + env(safe-area-inset-bottom));
-      border-top:1px solid var(--border);
+      width: min(100%, var(--maxw));
+      position: sticky;
+      bottom: 0;
+      padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+      box-sizing:border-box;
+      background: linear-gradient(to top, #f6f7fb 70%, rgba(246,247,251,0));
     }
+
     .btn{
       width:100%;
-      height:clamp(56px, 7vh, 72px);
-      border:none;
-      border-radius:calc(20px * var(--ui));
-      background:var(--brand);
+      height: var(--btnH);
+      border: 0;
+      border-radius: 22px;
+      background:#06c755;
       color:#fff;
-      font-weight:900;
-      font-size:clamp(18px, 2.2vh, 24px); /* 你說要變大：這裡一定大 */
+      font-weight: 900;
+      font-size: var(--btnFont);
       cursor:pointer;
+      box-shadow: 0 10px 24px rgba(6,199,85,.25);
     }
-    .btn:disabled{ opacity:.6; cursor:not-allowed; }
+
     .msg{
+      margin-top: 10px;
       text-align:center;
-      margin-top:10px;
-      font-weight:800;
-      font-size:clamp(14px, 1.7vh, 16px);
+      font-size: var(--p);
+      font-weight: 800;
     }
-    .ok{ color:#0a7a3a; }
-    .err{ color:#b42318; }
+    .ok{ color:#0f7a3a; }
+    .err{ color:#d11a2a; }
+
+    /* ====== 電腦版更像 app：置中、上下不要太寬 ====== */
+    @media (min-width: 900px){
+      .content{ padding-top: 22px; }
+      .card{ padding: 18px; }
+      .demo img{ height: 170px; }
+    }
   </style>
 </head>
 
 <body>
-  <div class="shell">
-    <div class="app">
-      <!-- ===== 這段：上面內容（可滑動）===== -->
-      <div class="content">
-
-        <div class="card">
-          <h1>預約表單</h1>
-          <div class="muted">於 LINE 內完成，不會跳外部瀏覽器</div>
-        </div>
-
-        <div class="card">
-          <div class="sectionTitle">① 選擇服務</div>
-          <div class="demo-grid" id="demoGrid"></div>
-          <div class="muted" style="margin-top:10px;">（之後可換成你的實際服務項目／圖片）</div>
-        </div>
-
-        <div class="card">
-          <div class="sectionTitle">② 客戶資料</div>
-
-          <label>姓氏</label>
-          <div class="row">
-            <input id="lastName" placeholder="例如：陳" />
-            <select id="title">
-              <option value="">稱謂</option>
-              <option value="先生">先生</option>
-              <option value="小姐">小姐</option>
-            </select>
-          </div>
-
-          <label>聯絡電話</label>
-          <input id="phone" placeholder="0912345678" inputmode="tel" />
-
-          <label>備註（可選）</label>
-          <textarea id="note" placeholder="方便聯絡時間 / 需求說明…"></textarea>
-        </div>
-
+  <div class="app">
+    <div class="content">
+      <div class="card">
+        <h1>預約表單</h1>
+        <div class="muted">於 LINE 內完成，不會跳外部瀏覽器</div>
       </div>
 
-      <!-- ===== 這段：底部固定按鈕（永遠在最下面）===== -->
-      <div class="footer">
-        <button class="btn" id="submitBtn">我要預約</button>
-        <div class="msg" id="msg"></div>
+      <div class="card">
+        <div class="sectionTitle">① 選擇服務</div>
+        <div class="demo-grid" id="demoGrid"></div>
       </div>
+
+      <div class="card">
+        <div class="sectionTitle">② 客戶資料</div>
+
+        <label>姓氏</label>
+        <div class="row">
+          <input id="lastName" placeholder="例如：王" />
+          <select id="title">
+            <option value="">稱謂</option>
+            <option value="先生">先生</option>
+            <option value="小姐">小姐</option>
+          </select>
+        </div>
+
+        <label>聯絡電話</label>
+        <input id="phone" placeholder="0912345678" inputmode="tel" />
+
+        <label>備註（可選）</label>
+        <textarea id="note" placeholder="方便聯絡時間 / 需求說明"></textarea>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="btn" id="submitBtn">我要預約</button>
+      <div class="msg" id="msg"></div>
     </div>
   </div>
 
-  <!-- ===== 這段：LINE LIFF SDK（用來拿 userId / displayName）===== -->
+  <!-- LIFF SDK（非 LIFF 環境也不會卡死，只是 init 會失敗） -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
-  <!-- ===== 這段：主程式（渲染服務、初始化 LIFF、送出到 GAS）===== -->
   <script>
-    // ✅ 你只要改這兩個
-    const LIFF_ID = "2008866230-o043vGnI"; // ← 換成你的 LIFF ID
-    const API_URL = "https://script.google.com/macros/s/AKfycbzXIV_n3MEPgLhWWP-tFUPaMGX6T6Cxa5vxz6aUSP37I_sX2uyYywoTz2-P-ycMVVD_/exec"; // ← 換成你的 GAS /exec
+    /* ========= 你只需要改這兩行 ========= */
+    const LIFF_ID = "2008866230-o043vGnI";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzXIV_n3MEPgLhWWP-tFUPaMGX6T6Cxa5vxz6aUSP37I_sX2uyYywoTz2-P-ycMVVD_/exec"; // 例：https://script.google.com/macros/s/xxxx/exec
+    /* ==================================== */
 
-    // 這段：示範服務（先用假圖）
     const DEMOS = [
-      { id:"Demo A", name:"Demo A", img:"https://picsum.photos/600/400?1" },
-      { id:"Demo B", name:"Demo B", img:"https://picsum.photos/600/400?2" },
+      { id: "Demo A", name: "Demo A", img: "https://picsum.photos/600/400?1" },
+      { id: "Demo B", name: "Demo B", img: "https://picsum.photos/600/400?2" }
     ];
 
     let selectedDemo = "";
     let userId = "";
     let displayName = "";
 
-    // 這段：畫出兩張服務卡
+    function setMsg(text, type){
+      const el = document.getElementById("msg");
+      el.className = "msg " + (type || "");
+      el.textContent = text || "";
+    }
+
     function renderDemos(){
       const grid = document.getElementById("demoGrid");
       grid.innerHTML = "";
-
       DEMOS.forEach((d, i) => {
         const el = document.createElement("div");
         el.className = "demo";
@@ -255,42 +267,31 @@
           el.classList.add("active");
         };
         grid.appendChild(el);
-
-        if(i === 0) el.click(); // 預設選第一個
+        if (i === 0) el.click();
       });
     }
 
-    // 這段：顯示訊息
-    function showMsg(text, type=""){
-      const m = document.getElementById("msg");
-      m.className = "msg " + type;
-      m.textContent = text;
-    }
-
-    // 這段：初始化 LIFF（拿 userId / displayName）
-    async function initLIFF(){
+    async function initLiffSafe(){
       try{
+        if (!window.liff) return;
         await liff.init({ liffId: LIFF_ID });
+        if (liff.isLoggedIn && !liff.isLoggedIn()) liff.login();
 
-        if(!liff.isLoggedIn()){
-          // 外部測試時可能沒登入，讓它自動登入
-          liff.login();
-          return;
+        if (liff.getProfile){
+          const p = await liff.getProfile();
+          userId = p.userId || "";
+          displayName = p.displayName || "";
         }
-
-        const profile = await liff.getProfile();
-        userId = profile.userId || "";
-        displayName = profile.displayName || "";
       }catch(e){
-        showMsg("LIFF 初始化失敗：" + (e?.message || e), "err");
+        // 非 LIFF 環境正常：不要把畫面變成 OK，不要擋使用
+        // console.log("LIFF init skipped:", e);
       }
     }
 
-    // 這段：送出到 GAS（重點：application/json + cors）
     async function submit(){
       const btn = document.getElementById("submitBtn");
       btn.disabled = true;
-      showMsg("送出中…");
+      setMsg("送出中…");
 
       try{
         const payload = {
@@ -303,44 +304,43 @@
           displayName
         };
 
-        // 基本檢查
-        if(!payload.demo) throw new Error("請先選擇服務");
-        if(!payload.lastName) throw new Error("請填寫姓氏");
-        if(!payload.title) throw new Error("請選擇稱謂");
-        if(!payload.phone) throw new Error("請填寫電話");
+        if (!payload.demo) throw new Error("請先選擇服務");
+        if (!payload.lastName) throw new Error("請填寫姓氏");
+        if (!payload.title) throw new Error("請選擇稱謂");
+        if (!payload.phone) throw new Error("請填寫電話");
 
+        // ✅ 關鍵：用 text/plain 避免 CORS 預檢導致 Failed to fetch
         const res = await fetch(API_URL, {
           method: "POST",
-          mode: "cors",
-          redirect: "follow",
-          headers: { "Content-Type": "application/json" },  // ✅ 這行是關鍵
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(payload)
         });
 
         const text = await res.text();
         let json = {};
-        try { json = JSON.parse(text); } catch (_) {}
+        try{ json = JSON.parse(text); }catch(_){}
 
-        if(!res.ok || !json.success){
+        if (!res.ok || !json.success){
           throw new Error(json.error || ("HTTP " + res.status + " / " + text));
         }
 
-        showMsg("✅ 已送出，感謝預約", "ok");
+        setMsg("✅ 已送出，感謝預約", "ok");
 
-        // 在 LINE 裡才幫你關窗
-        if (typeof liff !== "undefined" && liff.isInClient()) {
-          setTimeout(() => liff.closeWindow(), 1200);
-        }
+        // 在 LIFF 內：送出後可關閉視窗
+        try{
+          if (window.liff && liff.isInClient && liff.isInClient()){
+            setTimeout(() => liff.closeWindow(), 900);
+          }
+        }catch(_){}
       }catch(e){
-        showMsg("❌ " + (e?.message || e), "err");
+        setMsg("❌ " + (e.message || e), "err");
       }finally{
         btn.disabled = false;
       }
     }
 
-    // 啟動
     renderDemos();
-    initLIFF();
+    initLiffSafe();
     document.getElementById("submitBtn").addEventListener("click", submit);
   </script>
 </body>
