@@ -6,189 +6,173 @@
   <title>LINE 預約</title>
 
   <style>
-    /* ====== 基本版面：手機像 App、電腦置中 ====== */
     :root{
-      --maxw: 720px;
-      --radius: 18px;
-      --gap: 14px;
+      /* 你要更大/更小就改這個 */
+      --ui: 1.00;
 
-      /* 字體/元件比例：想放大就調這個 */
-      --scale: 1.00;
+      --radius: calc(18px * var(--ui));
+      --gap: calc(10px * var(--ui));
 
-      --h1: calc(22px * var(--scale));
-      --h2: calc(18px * var(--scale));
-      --p:  calc(14px * var(--scale));
-      --label: calc(15px * var(--scale));
-      --input: calc(16px * var(--scale));
+      --h1: clamp(18px, 2.4vh, 22px);
+      --h2: clamp(16px, 2.1vh, 20px);
+      --p:  clamp(13px, 1.8vh, 16px);
+      --label: clamp(13px, 1.8vh, 16px);
+      --input: clamp(14px, 2.0vh, 17px);
 
-      --btnH: calc(62px * var(--scale));
-      --btnFont: calc(20px * var(--scale));
+      --btnH: clamp(52px, 7vh, 64px);
+      --btnFont: clamp(18px, 2.2vh, 22px);
     }
 
     html, body{
-      margin:0;
-      height:100%;
-      background:#f6f7fb;
+      margin: 0;
+      height: 100%;
+      background: #f6f7fb;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", Arial;
-      color:#111;
     }
 
+    /* App 容器：上面可滾、底部固定 */
     .app{
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* 上面內容可滾動、底部固定按鈕 */
     .content{
-      width: min(100%, var(--maxw));
-      padding: 14px;
-      box-sizing:border-box;
       flex: 1;
-      overflow:auto;
+      padding: calc(12px * var(--ui));
+      box-sizing: border-box;
+      overflow: auto;
       -webkit-overflow-scrolling: touch;
     }
 
     .card{
-      background:#fff;
+      background: #fff;
       border-radius: var(--radius);
-      box-shadow: 0 8px 22px rgba(0,0,0,.06);
-      padding: 16px;
+      padding: calc(14px * var(--ui));
+      box-shadow: 0 6px 18px rgba(0,0,0,.06);
       margin-bottom: var(--gap);
     }
 
     h1{
-      margin:0 0 6px 0;
       font-size: var(--h1);
+      margin: 0 0 8px 0;
       font-weight: 900;
-      letter-spacing: .5px;
     }
-
     .muted{
       font-size: var(--p);
-      color:#6b7280;
-      line-height:1.35;
+      color: #667085;
+      line-height: 1.35;
     }
 
     .sectionTitle{
       font-size: var(--h2);
       font-weight: 900;
-      display:flex;
-      align-items:center;
-      gap:10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin: 0 0 10px 0;
     }
 
-    /* ====== Demo 選擇 ====== */
+    /* Demo 選擇 */
     .demo-grid{
-      display:grid;
+      display: grid;
       grid-template-columns: 1fr 1fr;
       gap: var(--gap);
     }
-
     .demo{
       border: 2px solid #e5e7eb;
-      border-radius: calc(var(--radius) + 6px);
-      overflow:hidden;
-      background:#fff;
-      cursor:pointer;
-      user-select:none;
+      border-radius: calc(16px * var(--ui));
+      overflow: hidden;
+      cursor: pointer;
+      background: #fff;
+      user-select: none;
     }
-
-    .demo.active{
-      border-color:#06c755;
-      box-shadow: 0 0 0 3px rgba(6,199,85,.18);
-    }
-
     .demo img{
-      width:100%;
-      height: 140px;
-      object-fit:cover;
-      display:block;
-      background:#eee;
+      width: 100%;
+      height: clamp(92px, 14vh, 120px);
+      object-fit: cover;
+      display: block;
+      background: #eee;
     }
-
     .demo .txt{
-      text-align:center;
+      padding: calc(8px * var(--ui));
+      text-align: center;
       font-weight: 900;
-      padding: 10px;
-      font-size: calc(18px * var(--scale));
+      font-size: clamp(14px, 2.0vh, 17px);
+    }
+    .demo.active{
+      border-color: #06c755;
+      box-shadow: 0 0 0 3px rgba(6,199,85,.2);
     }
 
-    /* ====== 表單 ====== */
+    /* 表單 */
     label{
-      display:block;
-      margin: 10px 0 6px;
+      display: block;
+      margin: calc(10px * var(--ui)) 0 calc(6px * var(--ui));
       font-size: var(--label);
       font-weight: 800;
     }
-
-    .row{
-      display:grid;
-      grid-template-columns: 1fr 160px;
-      gap: var(--gap);
-    }
-
     input, select, textarea{
-      width:100%;
-      box-sizing:border-box;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 14px 14px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #e2e6ef;
+      border-radius: calc(14px * var(--ui));
+      padding: calc(12px * var(--ui));
       font-size: var(--input);
-      outline:none;
-      background:#fff;
+      outline: none;
+      background: #fff;
     }
-
+    .row{
+      display: grid;
+      grid-template-columns: 1fr clamp(110px, 26vw, 140px);
+      gap: var(--gap);
+      align-items: center;
+    }
     textarea{
-      resize:none;
-      height: 120px;
+      height: clamp(70px, 12vh, 110px);
+      resize: none;
     }
 
-    /* ====== 底部固定區 ====== */
+    /* 底部固定區 */
     .footer{
-      width: min(100%, var(--maxw));
       position: sticky;
       bottom: 0;
-      padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
-      box-sizing:border-box;
-      background: linear-gradient(to top, #f6f7fb 70%, rgba(246,247,251,0));
+      background: #f6f7fb;
+      padding: calc(10px * var(--ui)) calc(12px * var(--ui)) calc(10px * var(--ui) + env(safe-area-inset-bottom));
+      border-top: 1px solid #eef0f6;
+      box-sizing: border-box;
     }
 
     .btn{
-      width:100%;
+      width: 100%;
       height: var(--btnH);
       border: 0;
-      border-radius: 22px;
-      background:#06c755;
-      color:#fff;
-      font-weight: 900;
+      border-radius: calc(18px * var(--ui));
+      background: #06c755;
+      color: #fff;
       font-size: var(--btnFont);
-      cursor:pointer;
-      box-shadow: 0 10px 24px rgba(6,199,85,.25);
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .btn:disabled{
+      opacity: .6;
+      cursor: not-allowed;
     }
 
     .msg{
       margin-top: 10px;
-      text-align:center;
-      font-size: var(--p);
-      font-weight: 800;
+      text-align: center;
+      font-size: clamp(14px, 2.0vh, 18px);
+      font-weight: 900;
     }
-    .ok{ color:#0f7a3a; }
-    .err{ color:#d11a2a; }
-
-    /* ====== 電腦版更像 app：置中、上下不要太寬 ====== */
-    @media (min-width: 900px){
-      .content{ padding-top: 22px; }
-      .card{ padding: 18px; }
-      .demo img{ height: 170px; }
-    }
+    .msg.ok{ color: #067647; }
+    .msg.err{ color: #b42318; }
   </style>
 </head>
 
 <body>
   <div class="app">
+
     <div class="content">
       <div class="card">
         <h1>預約表單</h1>
@@ -203,7 +187,7 @@
       <div class="card">
         <div class="sectionTitle">② 客戶資料</div>
 
-        <label>姓氏</label>
+        <label>姓名</label>
         <div class="row">
           <input id="lastName" placeholder="例如：王" />
           <select id="title">
@@ -217,7 +201,7 @@
         <input id="phone" placeholder="0912345678" inputmode="tel" />
 
         <label>備註（可選）</label>
-        <textarea id="note" placeholder="方便聯絡時間 / 需求說明"></textarea>
+        <textarea id="note" placeholder="方便聯絡時間 / 需求說明…"></textarea>
       </div>
     </div>
 
@@ -225,30 +209,35 @@
       <button class="btn" id="submitBtn">我要預約</button>
       <div class="msg" id="msg"></div>
     </div>
+
   </div>
 
-  <!-- LIFF SDK（非 LIFF 環境也不會卡死，只是 init 會失敗） -->
+  <!-- LIFF SDK -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
   <script>
-    /* ========= 你只需要改這兩行 ========= */
+    /***********************
+     * 1) 改這兩個就好
+     ***********************/
     const LIFF_ID = "2008866230-o043vGnI";
-    const API_URL = "https://script.google.com/macros/s/AKfycbzXIV_n3MEPgLhWWP-tFUPaMGX6T6Cxa5vxz6aUSP37I_sX2uyYywoTz2-P-ycMVVD_/exec"; // 例：https://script.google.com/macros/s/xxxx/exec
-    /* ==================================== */
+    const API_URL = "https://script.google.com/macros/s/AKfycbzXIV_n3MEPgLhWWP-tFUPaMGX6T6Cxa5vxz6aUSP37I_sX2uyYywoTz2-P-ycMVVD_/exec";
 
+    /***********************
+     * 2) Demo 資料
+     ***********************/
     const DEMOS = [
       { id: "Demo A", name: "Demo A", img: "https://picsum.photos/600/400?1" },
-      { id: "Demo B", name: "Demo B", img: "https://picsum.photos/600/400?2" }
+      { id: "Demo B", name: "Demo B", img: "https://picsum.photos/600/400?2" },
     ];
 
     let selectedDemo = "";
     let userId = "";
     let displayName = "";
 
-    function setMsg(text, type){
+    function showMsg(text, ok){
       const el = document.getElementById("msg");
-      el.className = "msg " + (type || "");
-      el.textContent = text || "";
+      el.className = "msg " + (ok ? "ok" : "err");
+      el.textContent = text;
     }
 
     function renderDemos(){
@@ -271,27 +260,26 @@
       });
     }
 
-    async function initLiffSafe(){
+    async function initLIFF(){
+      // 如果不是在 LINE 內開啟（例如一般瀏覽器/桌機），就不強制初始化
       try{
-        if (!window.liff) return;
         await liff.init({ liffId: LIFF_ID });
-        if (liff.isLoggedIn && !liff.isLoggedIn()) liff.login();
-
-        if (liff.getProfile){
-          const p = await liff.getProfile();
-          userId = p.userId || "";
-          displayName = p.displayName || "";
+        if (liff.isLoggedIn()){
+          const profile = await liff.getProfile();
+          userId = profile.userId || "";
+          displayName = profile.displayName || "";
         }
       }catch(e){
-        // 非 LIFF 環境正常：不要把畫面變成 OK，不要擋使用
-        // console.log("LIFF init skipped:", e);
+        // 不要一直顯示錯誤干擾使用者：只在需要用到時才提示
+        // 你如果想顯示也可以打開這行：
+        // showMsg("LIFF 初始化失敗", false);
       }
     }
 
     async function submit(){
       const btn = document.getElementById("submitBtn");
       btn.disabled = true;
-      setMsg("送出中…");
+      showMsg("送出中…", true);
 
       try{
         const payload = {
@@ -301,46 +289,57 @@
           phone: document.getElementById("phone").value.trim(),
           note: document.getElementById("note").value.trim(),
           userId,
-          displayName
+          displayName,
         };
 
         if (!payload.demo) throw new Error("請先選擇服務");
-        if (!payload.lastName) throw new Error("請填寫姓氏");
+        if (!payload.lastName) throw new Error("請填寫姓名");
         if (!payload.title) throw new Error("請選擇稱謂");
         if (!payload.phone) throw new Error("請填寫電話");
 
-        // ✅ 關鍵：用 text/plain 避免 CORS 預檢導致 Failed to fetch
+        // ✅ 不送 Content-Type，避免 preflight / OPTIONS
         const res = await fetch(API_URL, {
           method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
 
-        const text = await res.text();
-        let json = {};
-        try{ json = JSON.parse(text); }catch(_){}
+        const text = await res.text();   // ✅ 最穩
+        let data = {};
+        try { data = JSON.parse(text); } catch (e) {}
 
-        if (!res.ok || !json.success){
-          throw new Error(json.error || ("HTTP " + res.status + " / " + text));
+        const ok = res.ok && data && data.success === true;
+
+        if (ok){
+          showMsg("✅ 預約成功", true);
+
+          // 在 LINE 內才回訊息 + 關閉
+          if (window.liff && liff.isInClient()){
+            try{
+              await liff.sendMessages([{ type: "text", text: "已收到您的預約 ✅" }]);
+              setTimeout(() => liff.closeWindow(), 600);
+            }catch(e){}
+          }
+        }else{
+          // 你要的：失敗就顯示「預約失敗」
+          showMsg("❌ 預約失敗", false);
+
+          // 你如果想要順便顯示原因，把上一行改成：
+          // showMsg("❌ 預約失敗：" + (data.error || ("HTTP " + res.status)), false);
         }
 
-        setMsg("✅ 已送出，感謝預約", "ok");
-
-        // 在 LIFF 內：送出後可關閉視窗
-        try{
-          if (window.liff && liff.isInClient && liff.isInClient()){
-            setTimeout(() => liff.closeWindow(), 900);
-          }
-        }catch(_){}
       }catch(e){
-        setMsg("❌ " + (e.message || e), "err");
+        // 你要的：失敗就顯示「預約失敗」
+        showMsg("❌ 預約失敗", false);
+
+        // 你如果想顯示原因，把上一行改成：
+        // showMsg("❌ 預約失敗：" + (e.message || e), false);
       }finally{
         btn.disabled = false;
       }
     }
 
     renderDemos();
-    initLiffSafe();
+    initLIFF();
     document.getElementById("submitBtn").addEventListener("click", submit);
   </script>
 </body>
