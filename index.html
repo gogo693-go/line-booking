@@ -1,188 +1,205 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>LINE 預約</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LINE 預約</title>
 
-  <style>
-    html,body{margin:0;height:100%;background:#f6f7fb;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",Arial}
-    .app{height:100%;display:flex;flex-direction:column}
-    .content{flex:1;overflow:auto;padding:12px;box-sizing:border-box}
-    .card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 6px 18px rgba(0,0,0,.05)}
-    h1{margin:0 0 6px;font-size:18px;font-weight:900}
-    .muted{font-size:13px;color:#667085}
-    .sectionTitle{font-size:16px;font-weight:900;margin-bottom:10px}
-    .demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .demo{border:2px solid #e5e7eb;border-radius:16px;overflow:hidden;cursor:pointer;background:#fff}
-    .demo.active{border-color:#06c755;box-shadow:0 0 0 3px rgba(6,199,85,.25)}
-    .demo img{width:100%;height:110px;object-fit:cover;display:block;background:#eee}
-    .demo .txt{text-align:center;font-weight:900;padding:8px}
-    label{display:block;font-size:13px;font-weight:800;margin:10px 0 6px}
-    input,select,textarea{width:100%;padding:12px;border-radius:14px;border:1px solid #e2e6ef;box-sizing:border-box;font-size:14px}
-    .row{display:grid;grid-template-columns:1fr 120px;gap:10px}
-    textarea{resize:none;height:90px}
-    .footer{position:sticky;bottom:0;background:#f6f7fb;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid #eef0f6}
-    .btn{width:100%;height:56px;border:none;border-radius:16px;background:#06c755;color:#fff;font-size:18px;font-weight:900;cursor:pointer}
-    .msg{margin-top:8px;text-align:center;font-size:14px;color:#667085}
-    .msg.ok{color:#067647;font-weight:900}
-    .msg.err{color:#b42318;font-weight:900}
-  </style>
+<style>
+body {
+  margin: 0;
+  background: #f6f7fb;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+}
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.content {
+  padding: 16px;
+  flex: 1;
+}
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.demo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.demo {
+  border: 2px solid #ddd;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.demo.active {
+  border-color: #06c755;
+}
+.demo img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+.demo .txt {
+  padding: 8px;
+  text-align: center;
+  font-weight: 700;
+}
+label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 8px;
+}
+.footer {
+  padding: 12px;
+  background: #fff;
+  border-top: 1px solid #eee;
+}
+button {
+  width: 100%;
+  height: 56px;
+  border-radius: 16px;
+  border: none;
+  background: #06c755;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+}
+.msg {
+  margin-top: 8px;
+  text-align: center;
+  font-weight: 700;
+}
+.msg.ok { color: #06c755; }
+.msg.err { color: #d93025; }
+</style>
 </head>
 
 <body>
 <div class="app">
 
-  <div class="content">
-    <div class="card">
-      <h1>LINE 預約</h1>
-      <div class="muted">於 LINE 內完成，不會跳出瀏覽器</div>
-    </div>
-
-    <div class="card">
-      <div class="sectionTitle">① 選擇產品</div>
-      <div class="demo-grid" id="demoGrid"></div>
-    </div>
-
-    <div class="card">
-      <div class="sectionTitle">② 客戶資料</div>
-
-      <label>姓氏</label>
-      <div class="row">
-        <input id="lastName" placeholder="例如：王">
-        <select id="title">
-          <option value="">稱謂</option>
-          <option value="先生">先生</option>
-          <option value="小姐">小姐</option>
-        </select>
-      </div>
-
-      <label>聯絡電話</label>
-      <input id="phone" placeholder="0912345678" inputmode="tel">
-
-      <label>備註（可選）</label>
-      <textarea id="note" placeholder="方便聯絡時間 / 需求說明"></textarea>
-    </div>
+<div class="content">
+  <div class="card">
+    <h2>① 選擇服務</h2>
+    <div class="demo-grid" id="demoGrid"></div>
   </div>
 
-  <div class="footer">
-    <button class="btn" id="submitBtn">我要預約</button>
-    <div class="msg" id="msg"></div>
+  <div class="card">
+    <h2>② 客戶資料</h2>
+
+    <label>姓氏</label>
+    <div class="row">
+      <input id="lastName" placeholder="例如：王">
+      <select id="title">
+        <option value="">稱謂</option>
+        <option>先生</option>
+        <option>小姐</option>
+      </select>
+    </div>
+
+    <label>聯絡電話</label>
+    <input id="phone" placeholder="0912345678" inputmode="tel">
+
+    <label>備註（可選）</label>
+    <textarea id="note"></textarea>
   </div>
+</div>
+
+<div class="footer">
+  <button id="submitBtn">我要預約</button>
+  <div class="msg" id="msg"></div>
+</div>
 
 </div>
 
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-
 <script>
-  /* ====== 只改這裡 ====== */
-  const LIFF_ID = "2008866230-o043vGnI";
-  const API_URL = "https://script.google.com/macros/s/AKfycbzXIV_n3MEPgLhWWP-tFUPaMGX6T6Cxa5vxz6aUSP37I_sX2uyYywoTz2-P-ycMVVD_/exec";
-  /* ====================== */
+/* ===== 只要改這一行 ===== */
+const API_URL = "https://script.google.com/macros/s/AKfycbzXIV_n3MEPgLhWWP-tFUPaMGX6T6Cxa5vxz6aUSP37I_sX2uyYywoTz2-P-ycMVVD_/exec";
+/* ====================== */
 
-  const DEMOS = [
-    { id:"Demo A", name:"Demo A", img:"https://picsum.photos/600/400?1" },
-    { id:"Demo B", name:"Demo B", img:"https://picsum.photos/600/400?2" }
-  ];
+const DEMOS = [
+  { id: "Demo A", img: "https://picsum.photos/400/300?1" },
+  { id: "Demo B", img: "https://picsum.photos/400/300?2" }
+];
 
-  let selectedDemo = "";
+let selectedDemo = "";
 
-  const $ = (id)=>document.getElementById(id);
+const demoGrid = document.getElementById("demoGrid");
+DEMOS.forEach(d => {
+  const el = document.createElement("div");
+  el.className = "demo";
+  el.innerHTML = `<img src="${d.img}"><div class="txt">${d.id}</div>`;
+  el.onclick = () => {
+    selectedDemo = d.id;
+    document.querySelectorAll(".demo").forEach(x => x.classList.remove("active"));
+    el.classList.add("active");
+  };
+  demoGrid.appendChild(el);
+});
+document.querySelector(".demo")?.click();
 
-  function setMsg(t,type=""){
-    const m=$("msg");
-    m.className="msg "+type;
-    m.textContent=t||"";
-  }
+function showMsg(text, ok) {
+  const m = document.getElementById("msg");
+  m.textContent = text;
+  m.className = "msg " + (ok ? "ok" : "err");
+}
 
-  function renderDemos(){
-    const g=$("demoGrid");
-    g.innerHTML="";
-    DEMOS.forEach((d,i)=>{
-      const el=document.createElement("div");
-      el.className="demo";
-      el.innerHTML=`<img src="${d.img}" alt=""><div class="txt">${d.name}</div>`;
-      el.onclick=()=>{
-        selectedDemo=d.id;
-        [...g.children].forEach(x=>x.classList.remove("active"));
-        el.classList.add("active");
-      };
-      g.appendChild(el);
-      if(i===0) el.click();
+document.getElementById("submitBtn").onclick = async () => {
+  const lastName = lastNameInput.value.trim();
+  const title = titleInput.value;
+  const phone = phoneInput.value.trim();
+
+  if (!selectedDemo) return showMsg("請選擇服務", false);
+  if (!lastName) return showMsg("請填寫姓氏", false);
+  if (!title) return showMsg("請選擇稱謂", false);
+  if (!/^\d{10}$/.test(phone)) return showMsg("請填寫正確電話", false);
+
+  showMsg("送出中…");
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        demo: selectedDemo,
+        lastName,
+        title,
+        phone,
+        note: note.value.trim()
+      })
     });
-  }
 
-  function validate(){
-    const ln=$("lastName").value.trim();
-    const tt=$("title").value.trim();
-    const ph=$("phone").value.trim();
+    const json = await res.json();
 
-    if(!ln) return "請填寫姓氏";
-    if(!tt) return "請選擇稱謂";
-    if(!ph) return "請填寫電話";
-    if(!/^\d{10}$/.test(ph)) return "電話格式不正確";
-    return "";
-  }
-
-  async function submit(){
-    const err=validate();
-    if(err){ setMsg("❌ "+err,"err"); return; }
-
-    setMsg("送出中…");
-    $("submitBtn").disabled=true;
-
-    let userId="", displayName="";
-    try{
-      if(liff.isInClient()){
-        // LINE 內通常已登入，但保險起見做判斷
-        if(!liff.isLoggedIn()) liff.login();
-        const p=await liff.getProfile();
-        userId=p.userId||"";
-        displayName=p.displayName||"";
-      }
-    }catch(_){}
-
-    const payload={
-      demo:selectedDemo,
-      lastName:$("lastName").value.trim(),
-      title:$("title").value.trim(),
-      phone:$("phone").value.trim(),
-      note:$("note").value.trim(),
-      userId, displayName
-    };
-
-    try{
-      const res = await fetch(API_URL,{
-        method:"POST",
-        headers:{ "Content-Type":"text/plain;charset=utf-8" }, // 簡單請求，減少麻煩
-        body:JSON.stringify(payload)
-      });
-
-      const text = await res.text();
-      let json = {};
-      try{ json = JSON.parse(text); }catch(_){}
-
-      if(!res.ok || !json.success){
-        throw new Error(json.error || ("HTTP "+res.status));
-      }
-
-      setMsg("✅ 預約成功","ok");
-      if(liff.isInClient()) setTimeout(()=>liff.closeWindow(),900);
-    }catch(e){
-      setMsg("❌ 預約失敗","err");
-    }finally{
-      $("submitBtn").disabled=false;
+    if (json.success) {
+      showMsg("✅ 預約成功", true);
+    } else {
+      showMsg("❌ " + json.message, false);
     }
-  }
 
-  async function init(){
-    // 不要在非 LINE 內硬顯示「初始化失敗」
-    try{ await liff.init({ liffId: LIFF_ID }); }catch(_){}
-    renderDemos();
-    $("submitBtn").addEventListener("click", submit);
+  } catch (e) {
+    showMsg("❌ 預約失敗，請稍後再試", false);
   }
-
-  init();
+};
 </script>
+
 </body>
 </html>
