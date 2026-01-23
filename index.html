@@ -1,287 +1,174 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>LINE 預約</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LINE 預約</title>
 
-  <style>
-    body {
-      margin: 0;
-      background: #f6f7fb;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", Arial, sans-serif;
-    }
-    .app {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .content {
-      padding: 16px;
-      flex: 1;
-      box-sizing: border-box;
-    }
-    .card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 6px 18px rgba(0,0,0,.06);
-    }
-    h2 {
-      margin: 0 0 12px 0;
-      font-size: 20px;
-      font-weight: 900;
-    }
-    .demo-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .demo {
-      border: 2px solid #e2e6ef;
-      border-radius: 14px;
-      overflow: hidden;
-      cursor: pointer;
-      background: #fff;
-      transition: transform .06s ease, border-color .12s ease;
-      user-select: none;
-    }
-    .demo:active { transform: scale(0.99); }
-    .demo.active {
-      border-color: #06c755;
-      box-shadow: 0 0 0 3px rgba(6,199,85,.18);
-    }
-    .demo img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      display: block;
-      background: #eee;
-    }
-    .demo .txt {
-      padding: 10px 8px;
-      text-align: center;
-      font-weight: 900;
-      font-size: 18px;
-    }
-
-    label {
-      display: block;
-      margin-top: 12px;
-      margin-bottom: 6px;
-      font-weight: 800;
-      font-size: 15px;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #e2e6ef;
-      font-size: 16px;
-      box-sizing: border-box;
-      outline: none;
-      background: #fff;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: rgba(6,199,85,.6);
-      box-shadow: 0 0 0 3px rgba(6,199,85,.15);
-    }
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 140px;
-      gap: 10px;
-      align-items: center;
-    }
-    textarea {
-      min-height: 88px;
-      resize: vertical;
-    }
-
-    .footer {
-      position: sticky;
-      bottom: 0;
-      padding: 12px;
-      background: #f6f7fb;
-      border-top: 1px solid #eef0f6;
-      box-sizing: border-box;
-    }
-    button {
-      width: 100%;
-      height: 56px;
-      border-radius: 16px;
-      border: none;
-      background: #06c755;
-      color: #fff;
-      font-size: 18px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-    button:disabled {
-      opacity: .65;
-      cursor: not-allowed;
-    }
-    .msg {
-      margin-top: 10px;
-      text-align: center;
-      font-weight: 900;
-      font-size: 16px;
-      min-height: 22px;
-    }
-    .msg.ok { color: #06c755; }
-    .msg.err { color: #d93025; }
-    .hint {
-      color: #667085;
-      font-size: 13px;
-      font-weight: 700;
-      margin-top: 6px;
-      line-height: 1.4;
-    }
-  </style>
+<style>
+  body { margin:0; background:#f6f7fb; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto; }
+  .app { min-height:100vh; display:flex; flex-direction:column; }
+  .content { padding:16px; flex:1; }
+  .card { background:#fff; border-radius:16px; padding:16px; margin-bottom:16px; }
+  .demo-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .demo { border:2px solid #ddd; border-radius:14px; overflow:hidden; cursor:pointer; background:#fff; }
+  .demo.active { border-color:#06c755; box-shadow:0 0 0 3px rgba(6,199,85,.15); }
+  .demo img { width:100%; height:120px; object-fit:cover; display:block; }
+  .demo .txt { padding:8px; text-align:center; font-weight:800; }
+  label { display:block; margin-top:12px; margin-bottom:6px; font-weight:800; }
+  input, select, textarea { width:100%; padding:12px; border-radius:12px; border:1px solid #ddd; font-size:16px; box-sizing:border-box; }
+  .row { display:grid; grid-template-columns:1fr 120px; gap:8px; }
+  textarea { min-height:88px; resize:none; }
+  .footer { padding:12px; background:#fff; border-top:1px solid #eee; }
+  button { width:100%; height:56px; border-radius:16px; border:none; background:#06c755; color:#fff; font-size:18px; font-weight:900; cursor:pointer; }
+  button:disabled { opacity:.6; cursor:not-allowed; }
+  .msg { margin-top:10px; text-align:center; font-weight:900; }
+  .msg.ok { color:#06c755; }
+  .msg.err { color:#d93025; }
+</style>
 </head>
 
 <body>
-  <div class="app">
-
-    <div class="content">
-      <div class="card">
-        <h2>① 選擇服務</h2>
-        <div class="demo-grid" id="demoGrid"></div>
-      </div>
-
-      <div class="card">
-        <h2>② 客戶資料</h2>
-
-        <label for="lastName">姓氏</label>
-        <div class="row">
-          <input id="lastName" placeholder="例如：王" autocomplete="family-name" />
-          <select id="title">
-            <option value="">稱謂</option>
-            <option value="先生">先生</option>
-            <option value="小姐">小姐</option>
-          </select>
-        </div>
-
-        <label for="phone">聯絡電話</label>
-        <input id="phone" placeholder="0912345678" inputmode="tel" autocomplete="tel" />
-        <div class="hint">請填可聯絡到您的電話</div>
-
-        <label for="note">備註（可選）</label>
-        <textarea id="note" placeholder="例如：方便的時段、需求說明…"></textarea>
-      </div>
+<div class="app">
+  <div class="content">
+    <div class="card">
+      <h2>① 選擇服務</h2>
+      <div class="demo-grid" id="demoGrid"></div>
     </div>
 
-    <div class="footer">
-      <button id="submitBtn">我要預約</button>
-      <div class="msg" id="msg"></div>
-    </div>
+    <div class="card">
+      <h2>② 客戶資料</h2>
 
+      <label>姓氏</label>
+      <div class="row">
+        <input id="lastName" placeholder="例如：王" />
+        <select id="title">
+          <option value="">稱謂</option>
+          <option value="先生">先生</option>
+          <option value="小姐">小姐</option>
+        </select>
+      </div>
+
+      <label>聯絡電話</label>
+      <input id="phone" placeholder="0912345678" inputmode="tel" />
+
+      <label>備註（可選）</label>
+      <textarea id="note" placeholder="想預約時間、需求簡述…"></textarea>
+    </div>
   </div>
 
-  <script>
-    /* ===== 只會用這個：網頁應用程式 /exec ===== */
-    const API_URL = "https://script.google.com/macros/s/AKfycbzXIV_n3MEPgLhWWP-tFUPaMGX6T6Cxa5vxz6aUSP37I_sX2uyYywoTz2-P-ycMVVD_/exec";
+  <div class="footer">
+    <button id="submitBtn">我要預約</button>
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
 
-    const DEMOS = [
-      { id: "Demo A", img: "https://picsum.photos/600/400?1" },
-      { id: "Demo B", img: "https://picsum.photos/600/400?2" }
-    ];
+<!-- 隱藏 iframe：用來送出表單，不會 CORS，不會 Failed to fetch -->
+<iframe name="submitFrame" id="submitFrame" style="display:none;"></iframe>
 
-    let selectedDemo = "";
+<!-- 隱藏表單：用 POST 丟到 Apps Script /exec -->
+<form id="postForm" target="submitFrame" method="POST" style="display:none;">
+  <input name="demo" />
+  <input name="lastName" />
+  <input name="title" />
+  <input name="phone" />
+  <input name="note" />
+</form>
 
-    const $ = (id) => document.getElementById(id);
+<script>
+/* ===== 只要改這一行：貼「網頁應用程式」那個 /exec ===== */
+const API_URL = "https://script.google.com/macros/s/AKfycbzXIV_n3MEPgLhWWP-tFUPaMGX6T6Cxa5vxz6aUSP37I_sX2uyYywoTz2-P-ycMVVD_/exec";
+/* ======================================================== */
 
-    function showMsg(text, ok) {
-      const m = $("msg");
-      m.textContent = text || "";
-      m.className = "msg " + (ok ? "ok" : "err");
-    }
+const DEMOS = [
+  { id: "Demo A", img: "https://picsum.photos/400/300?1" },
+  { id: "Demo B", img: "https://picsum.photos/400/300?2" }
+];
 
-    function pickDemo(id) {
-      selectedDemo = id;
+let selectedDemo = "";
+
+const $ = (id) => document.getElementById(id);
+const demoGrid = $("demoGrid");
+const msgEl = $("msg");
+const btn = $("submitBtn");
+const form = $("postForm");
+
+function showMsg(text, ok) {
+  msgEl.textContent = text || "";
+  msgEl.className = "msg " + (ok ? "ok" : "err");
+}
+
+function renderDemos() {
+  demoGrid.innerHTML = "";
+  DEMOS.forEach((d) => {
+    const el = document.createElement("div");
+    el.className = "demo";
+    el.innerHTML = `<img src="${d.img}" alt=""><div class="txt">${d.id}</div>`;
+    el.onclick = () => {
+      selectedDemo = d.id;
       document.querySelectorAll(".demo").forEach(x => x.classList.remove("active"));
-      const el = document.querySelector(`.demo[data-id="${CSS.escape(id)}"]`);
-      if (el) el.classList.add("active");
-    }
+      el.classList.add("active");
+      showMsg("", true);
+    };
+    demoGrid.appendChild(el);
+  });
+  // 預設選第一個
+  demoGrid.querySelector(".demo")?.click();
+}
+renderDemos();
 
-    // Render demo cards
-    const demoGrid = $("demoGrid");
-    DEMOS.forEach(d => {
-      const el = document.createElement("div");
-      el.className = "demo";
-      el.dataset.id = d.id;
-      el.innerHTML = `<img src="${d.img}" alt=""><div class="txt">${d.id}</div>`;
-      el.addEventListener("click", () => {
-        pickDemo(d.id);
-        showMsg("", true);
-      });
-      demoGrid.appendChild(el);
-    });
-    if (DEMOS[0]) pickDemo(DEMOS[0].id);
+// 監聽後端回傳（iframe postMessage）
+let waiting = false;
+let timer = null;
 
-    function validate() {
-      const lastName = $("lastName").value.trim();
-      const title = $("title").value;
-      const phone = $("phone").value.trim();
+window.addEventListener("message", (event) => {
+  const data = event.data;
+  if (!data || data.source !== "line-booking") return;
 
-      if (!selectedDemo) return { ok: false, message: "請選擇服務" };
-      if (!lastName) return { ok: false, message: "請填寫姓氏" };
-      if (!title) return { ok: false, message: "請選擇稱謂" };
-      // 10位數限制（不把規則講太白）
-      if (!/^\d{10}$/.test(phone)) return { ok: false, message: "請填寫正確電話" };
+  // 收到回覆就結束等待
+  waiting = false;
+  if (timer) clearTimeout(timer);
+  btn.disabled = false;
 
-      return { ok: true, lastName, title, phone };
-    }
+  if (data.success) showMsg("✅ 預約成功", true);
+  else showMsg("❌ " + (data.message || "預約失敗"), false);
+});
 
-    $("submitBtn").addEventListener("click", async () => {
-      const btn = $("submitBtn");
-      const v = validate();
-      if (!v.ok) return showMsg(v.message, false);
+btn.onclick = () => {
+  const lastName = $("lastName").value.trim();
+  const title = $("title").value.trim();
+  const phone = $("phone").value.trim();
+  const note = $("note").value.trim();
 
-      const note = $("note").value.trim();
+  // 必填提示要精準
+  if (!selectedDemo) return showMsg("請先選擇服務", false);
+  if (!lastName) return showMsg("請填寫姓氏", false);
+  if (!title) return showMsg("請選擇稱謂", false);
+  if (!/^\d{10}$/.test(phone)) return showMsg("請填寫正確電話", false);
 
-      btn.disabled = true;
-      showMsg("送出中…", true);
+  // 送出
+  showMsg("送出中…", true);
+  btn.disabled = true;
+  waiting = true;
 
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            demo: selectedDemo,
-            lastName: v.lastName,
-            title: v.title,
-            phone: v.phone,
-            note
-          })
-        });
+  form.action = API_URL;
+  form.elements["demo"].value = selectedDemo;
+  form.elements["lastName"].value = lastName;
+  form.elements["title"].value = title;
+  form.elements["phone"].value = phone;
+  form.elements["note"].value = note;
 
-        // 有些情況 GAS 會回 200 但前端解析失敗，所以先用 text 再 parse
-        const text = await res.text();
-        let data = null;
-        try { data = JSON.parse(text); } catch (_) {}
+  // 超時保護：12 秒沒回就當失敗
+  if (timer) clearTimeout(timer);
+  timer = setTimeout(() => {
+    if (!waiting) return;
+    waiting = false;
+    btn.disabled = false;
+    showMsg("❌ 預約失敗，請稍後再試", false);
+  }, 12000);
 
-        if (!res.ok) {
-          // HTTP 非 2xx
-          showMsg("❌ 預約失敗，請稍後再試", false);
-          return;
-        }
-
-        if (data && data.success) {
-          showMsg("✅ 預約成功", true);
-        } else if (data && (data.message || data.error)) {
-          showMsg("❌ " + (data.message || data.error), false);
-        } else {
-          // 回傳不是 JSON 或格式不對
-          showMsg("❌ 預約失敗，請稍後再試", false);
-        }
-
-      } catch (e) {
-        showMsg("❌ 預約失敗，請稍後再試", false);
-      } finally {
-        btn.disabled = false;
-      }
-    });
-  </script>
+  form.submit();
+};
+</script>
 </body>
 </html>
